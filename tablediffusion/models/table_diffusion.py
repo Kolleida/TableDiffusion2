@@ -160,9 +160,13 @@ class TableDiffusion_Synthesiser:
                 df_encoded[col] = self.q_transformers[col].fit_transform(
                     df[col].values.reshape(-1, 1)
                 )
+        
+        # NOTE: Changed this because it doesn't reference when assigned.
+        # Also, seems like the plus 1 isn't right...
+        categorical_start_idx = df_encoded.shape[1]
         df_encoded = pd.concat([df_encoded, df_encoded_cat], axis=1)
 
-        categorical_start_idx = transformed_df.shape[1] + 1
+        # categorical_start_idx = transformed_df.shape[1] + 1
         self.total_categories = sum(self.category_counts.values())
         self.encoded_columns = df_encoded.columns  # store the column names of the encoded data
         self.data_dim = df_encoded.shape[1]  # store the dimensionality of the encoded data
@@ -313,12 +317,16 @@ class TableDiffusion_Synthesiser:
 
                 # Average loss over diffusion steps
                 loss = agg_loss / self.diffusion_steps
-                print(f"Batches: {self._elapsed_batches}, {agg_loss=}")
+                # NOTE: Debugging print statement (?) wasn't removed.
+                # print(f"Batches: {self._elapsed_batches}, {agg_loss=}")
 
                 # Backward propagation and optimization step
                 self.optim.zero_grad()
                 loss.backward()
                 self.optim.step()
+
+                # NOTE: Putting this here to check disk space usage...
+                torch.save(self.model.state_dict(), 'dp_diff.pth')
 
 
                 if self.sample_img_interval is not None and i % self.sample_img_interval == 0:

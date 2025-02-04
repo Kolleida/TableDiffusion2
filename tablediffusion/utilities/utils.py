@@ -91,7 +91,7 @@ def run_synthesisers(
 
         # Determine random seed for the repeat (from metaseed)
         _seed = _seeds[repeat - 1]
-        set_random_seed(_seed)
+        set_random_seed(_seed.item())
 
         for dataset, data_params in datasets.items():
 
@@ -164,6 +164,8 @@ def run_synthesisers(
 
                             # Fit the synth on the dataset
                             if raw_data:
+                                # NOTE: Have to use raw data for TableDiff because it does its own
+                                # preprocessing on the DataFrame
                                 model = model.fit(
                                     X.copy(), epsilon=eps, discrete_columns=disc_cols, **fit_params
                                 )
@@ -178,7 +180,18 @@ def run_synthesisers(
                             if generate_fakes:
                                 # Generate fake dataset
                                 print("Generating fake data...")
-                                X_fake = pd.DataFrame(model.sample(_X.shape[0]))
+
+                                # NOTE: For large data, have to generate incrementally to avoid CUDA OOM.
+                                max_step_size = 4096
+                                num_rows = _X.shape[0]
+
+                                fakes = []
+                                for i in tqdm(range(0, num_rows, max_step_size), desc='Synthetic Generation'):
+                                    step_size = min(max_step_size, num_rows - i)
+                                    fake = pd.DataFrame(model.sample(step_size))
+                                    fakes.append(fake)
+                                
+                                X_fake = pd.concat(fakes)
 
                                 if not raw_data:
                                     # Reverse the transformation

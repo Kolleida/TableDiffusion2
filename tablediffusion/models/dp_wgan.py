@@ -204,8 +204,11 @@ class WGAN_Synthesiser:
                     fake_validity = self.D(fake_X)
                     g_loss = -torch.mean(fake_validity)
 
+                    self.optim_D.zero_grad()
+
                     g_loss.backward()
                     self.optim_G.step()
+
 
                     if i % 300 == 0 and verbose:
                         print(
@@ -245,6 +248,9 @@ class WGAN_Synthesiser:
                             },
                             step=self._elapsed_batches,
                         )
+                # NOTE: Putting this here to check disk space usage...
+                torch.save(self.G.state_dict(), 'dp_wgan_g.pth')
+                torch.save(self.D.state_dict(), 'dp_wgan_d.pth')
 
         return self
 
