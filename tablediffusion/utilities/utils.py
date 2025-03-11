@@ -11,6 +11,7 @@ from mlflow.tracking import MlflowClient
 from torch import nn
 from tqdm import tqdm
 from utilities import load_and_prep_data
+import datetime
 
 
 def weights_init(m):
@@ -207,8 +208,9 @@ def run_synthesisers(
                                     f"fake_stats_{dataset}_{_synth}_{eps}.txt",
                                 )
                                 pd.set_option("display.max_columns", None)
+                                timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
                                 if fake_sample_path is not None:
-                                    _sample_path = f"{fake_sample_path}/fake_sample_{dataset}_{_synth}_{eps}_{repeat}.txt"
+                                    _sample_path = f"{fake_sample_path}/fake_sample_{dataset}_{_synth}_{eps}_{repeat}_{timestamp}.txt"
                                     X_fake.sample(30).to_csv(_sample_path, index=False)
                                     mlflow.log_artifact(_sample_path, "samples")
 
@@ -217,7 +219,7 @@ def run_synthesisers(
                                     print("Saving fake data...")
                                     X_fake.to_csv(
                                         Path(fake_data_path)
-                                        / f"fake_{dataset}_{_synth}_{eps}_{repeat}.csv",
+                                        / f"fake_{dataset}_{_synth}_{eps}_{repeat}_{timestamp}.csv",
                                         index=False,
                                     )
 

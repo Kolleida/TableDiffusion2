@@ -38,7 +38,8 @@ from tablediffusion.utilities import run_synthesisers
 
 def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
     DIR = Path("stuff")
-    DATADIR = Path("/home/azureuser/drive1/data/")
+    HOMEDIR = os.getenv('HOME')
+    DATADIR = Path(os.path.join(HOMEDIR, "TableDiffusion2/data"))
     RESULTDIR = DIR / "results"
 
     sys.path.append(str(SRCDIR))
@@ -50,7 +51,7 @@ def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
         if not os.path.exists(p):
             print(f"{p} does not exist")
 
-    EPOCHS = 1
+    EPOCHS = 2
     DIFFUSION_STEPS = 3
 
     synthesisers = {

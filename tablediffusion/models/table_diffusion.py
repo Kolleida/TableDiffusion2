@@ -372,7 +372,7 @@ class TableDiffusion_Synthesiser:
             for t in range(self.diffusion_steps -1, -1, -1):
                 beta_t = get_beta(t, self.diffusion_steps)
                 noise_scale = np.sqrt(beta_t)
-                print(f"Sampling {t=}, {np.sqrt(beta_t)=}")
+                # print(f"Sampling {t=}, {np.sqrt(beta_t)=}")
                 ax = axs[self.diffusion_steps - t - 1]
                 ax[2].imshow(samples.clone().detach().cpu().numpy()); ax[2].set_title(f"samples_{t}")
 

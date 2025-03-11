@@ -161,7 +161,7 @@ datasets = {
             ("OUT_BYTES", "positive int"),
             ("L4_SRC_PORT", "positive int"),
             ("L4_DST_PORT", "positive int"),
-            ("PROTOCOL", "positive int"),
+            ("PROTOCOL", "categorical"),
             ("TOTAL_FLOWS_EXP", "positive int"),
             ("ANOMALY", "categorical binary")
         ],
