@@ -151,14 +151,35 @@ datasets = {
         ]
     },
     "appraise": {
-        "path": "/home/azureuser/drive1/data/appraise_netflow_traffic_features.csv",
+        "path": "/home/ericwang/vae_cloud_computing/data/raw/appraise_labeled.csv",
         "sep": ",",
-        "drop_cols": [],
+        "drop_cols": ["IPV4_SRC_ADDR", "IPV4_DST_ADDR"],
         "data_types": [
             ("IN_PKTS", "positive int"),
             ("IN_BYTES", "positive int"),
             ("OUT_PKTS", "positive int"),
-            ("OUT_BYTES", "positive int")
+            ("OUT_BYTES", "positive int"),
+            ("L4_SRC_PORT", "positive int"),
+            ("L4_DST_PORT", "positive int"),
+            ("PROTOCOL", "positive int"),
+            ("TOTAL_FLOWS_EXP", "positive int"),
+            ("ANOMALY", "categorical binary")
+        ],
+    },
+    "nfuq_v2": {
+        "path": "/home/ericwang/vae_cloud_computing/data/raw/NF_UQ.csv",
+        "sep": ",",
+        "drop_cols": ["IPV4_SRC_ADDR", "IPV4_DST_ADDR"],
+        "data_types": [
+            ("IN_PKTS", "positive int"),
+            ("IN_BYTES", "positive int"),
+            ("OUT_PKTS", "positive int"),
+            ("OUT_BYTES", "positive int"),
+            ("L4_SRC_PORT", "positive int"),
+            ("L4_DST_PORT", "positive int"),
+            ("PROTOCOL", "positive int"),
+            ("FLOW_DURATION_MILLISECONDS", "positive int"),
+            ("Label", "categorical binary")
         ],
     },
 }

@@ -1,8 +1,6 @@
 from pathlib import Path
 import os
-from __future__ import print_function
 import argparse
-import os
 from datetime import datetime
 import random
 import torch
@@ -22,6 +20,12 @@ import sys
 import time
 import argparse
 
+# Have to add path to the top level module, because the code doesn't seem to use relative imports...
+REPO_DIR = os.path.dirname(os.path.realpath(__file__))
+SRCDIR = os.path.join(REPO_DIR, 'tablediffusion')
+sys.path.append(SRCDIR)
+
+# TableDiffusion code.
 from tablediffusion.models import *
 import tablediffusion.utilities.utils as utils
 import tablediffusion.utilities.data_utils as data_utils
@@ -31,8 +35,8 @@ from tablediffusion.utilities import run_synthesisers
 
 
 
+
 def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
-    SRCDIR = "tablediffusion"
     DIR = Path("stuff")
     DATADIR = Path("/home/azureuser/drive1/data/")
     RESULTDIR = DIR / "results"
