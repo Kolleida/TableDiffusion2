@@ -23,7 +23,13 @@ def load_and_prep_data(dataset="uci_adult", datadir="../data", verbose=False):
 
     # Load the dataset
     path = Path(datadir) / data_params["path"]
-    X = pd.read_csv(path, sep=data_params["sep"]).drop(data_params["drop_cols"], axis=1)
+    try:
+        print('Trying to load csv')
+        X = pd.read_csv(path, sep=data_params["sep"]).drop(data_params["drop_cols"], axis=1)
+    except:
+        print('Trying to load parquet')
+        X = pd.read_parquet(path).drop(data_params["drop_cols"], axis=1)
+        X = X.reset_index(drop=True)
     if verbose:
         print(f"Loaded {dataset} dataset {X.shape} from {path}")
 

@@ -51,7 +51,7 @@ def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
         if not os.path.exists(p):
             print(f"{p} does not exist")
 
-    EPOCHS = 2
+    EPOCHS = 1
     DIFFUSION_STEPS = 3
 
     synthesisers = {
