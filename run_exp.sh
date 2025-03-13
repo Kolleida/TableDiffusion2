@@ -10,6 +10,16 @@ echo "Creating directory: ${SYN_DATA_DIR}"
 mkdir -p "${SYN_DATA_DIR}"
 
 
-python run_diff_gan.py \
+RAW_DATA="/home/ericwang/vae_cloud_computing/data/preprocessed/temp/nf_uq_temp_*.csv"
+PREPROC_DATA="data/nfuq_preproc.parquet"
+PREPROC_DATA="data/appraise_preproc.parquet"
+
+
+# python prepare_data.py \
+#     --data_path "${RAW_DATA}" \
+#     --output_path "${PREPROC_DATA}" 
+
+
+CUDA_VISIBLE_DEVICES=2 python run_diff_gan.py \
     --input_dataset "appraise" \
     --output_dir "${SYN_DATA_DIR}"

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from config import datasets
 from prettytable import PrettyTable
-from sklearn.preprocessing import LabelBinarizer, MinMaxScaler
+from sklearn.preprocessing import LabelBinarizer, MinMaxScaler, StandardScaler
 
 
 def load_and_prep_data(dataset="uci_adult", datadir="../data", verbose=False):
@@ -112,7 +112,7 @@ class DataProcessor:
             if "categorical" in datatype:
                 preprocessor = LabelBinarizer()
             else:
-                preprocessor = MinMaxScaler()
+                preprocessor = StandardScaler()
 
             preprocessed_col = preprocessor.fit_transform(preprocessed_col)
             cutoffs.append(preprocessed_col.shape[1])

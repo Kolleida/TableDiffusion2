@@ -45,7 +45,7 @@ def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
     sys.path.append(str(SRCDIR))
 
     DEVICE = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
-    SEED = 999
+    SEED = 900
 
     for p in [SRCDIR, DIR, DATADIR, RESULTDIR]:
         if not os.path.exists(p):
