@@ -215,7 +215,7 @@ class DPautoGAN_Synthesiser:
                 module=self.D,
                 optimizer=self.optim_D,
                 data_loader=train_data,
-                target_epsilon=self.epsilon_target * (1 / self.ae_eps_frac),
+                target_epsilon=self.epsilon_target * (1 - self.ae_eps_frac),
                 target_delta=self._delta,
                 epochs=n_epochs,
                 max_grad_norm=self.max_grad_norm,
@@ -306,6 +306,10 @@ class DPautoGAN_Synthesiser:
                 g_loss = -torch.mean(self.D(fake))
                 g_loss.backward()
                 self.optim_G.step()
+
+                if i % 300 == 0:
+                    print(f"Epoch {epoch}, D loss: {d_loss.item():.4f}, G loss: {g_loss.item():.4f}")
+                    print(f'Epsilon spent: {self._eps}')
 
                 if i % 50 == 0 and self.mlflow_logging:
                     mlflow.log_metrics(

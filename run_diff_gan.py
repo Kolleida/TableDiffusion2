@@ -34,6 +34,118 @@ import tablediffusion.config as config
 from tablediffusion.utilities import run_synthesisers
 
 
+GAN_EPOCHS = 1
+DIFF_EPOCHS = 1
+DIFFUSION_STEPS = 3
+
+SYNTHESIZERS = {
+    "DPWGAN": (
+        WGAN_Synthesiser,
+        {
+            "batch_size": 1024,
+            'gen_lr': 0.005,
+            'dis_lr': 0.001,
+            "latent_dim": 128,
+            'n_critic': 2,
+            "epoch_target": GAN_EPOCHS,
+            "mlflow_logging": False,
+            'gen_dims': (512, 512),
+            'dis_dims': (512, 512)
+        },
+        {
+            "n_epochs": GAN_EPOCHS,
+        },
+        {
+            "use_raw_data": False,
+        },
+    ),
+    "DPautoGAN": (
+        DPautoGAN_Synthesiser,
+        {
+            'batch_size': 1024,
+            'latent_dim': 64,
+            "gen_dims": (256, 256, 256),
+            "dis_dims": (256, 256, 256),
+            'gen_lr': 0.0001,
+            'dis_lr': 0.0007,
+            "ae_lr": 0.02,
+            "ae_compress_dim": 16,
+            "ae_eps_frac": 0.3,
+            'epoch_target': GAN_EPOCHS,
+            'mlflow_logging': True,
+        },
+        {
+            "n_epochs": GAN_EPOCHS,
+        },
+        {
+            "use_raw_data": False,
+        },
+    ),
+    "PATEGAN": (
+        PATEGAN_Synthesiser,
+        {
+            'batch_size': 1024,
+            "gen_dims": (512, 512, 512),
+            "dis_dims": (512, 512, 512),
+            'gen_lr': 0.005,
+            'dis_lr': 0.001,
+            'latent_dim': 128,
+            'num_teachers': 30,
+            'teacher_iters': 8,
+            'student_iters': 5,
+            'epoch_target': GAN_EPOCHS,
+            'mlflow_logging': True,
+        },
+        {
+            'n_epochs': GAN_EPOCHS,
+            'noise_multiplier': 0.0048,
+        },
+        {
+            "use_raw_data": False,
+        },
+    ),
+    "DPDiffusion": (
+        TableDiffusion_Synthesiser,
+        {
+            "batch_size": 1024,
+            "lr": 0.005,
+            "dims": (512, 512),
+            "mlflow_logging": False,
+            "epoch_target": DIFF_EPOCHS,
+            "diffusion_steps": DIFFUSION_STEPS,
+            "predict_noise": True,
+        },
+        {
+            "n_epochs": DIFF_EPOCHS,
+            "verbose": True,
+        },
+        {
+            "use_raw_data": True,
+        },
+    ),
+    "DPAttentionGAN": (
+            DPattentionGAN_Synthesiser,
+            {
+                'batch_size': 1024,
+                'latent_dim': 64,
+                "gen_dims": (256, 256),
+                "dis_dims": (256, 256),
+                'gen_lr': 0.0001,
+                'dis_lr': 0.0007,
+                "ae_lr": 0.02,
+                "ae_compress_dim": 16,
+                "ae_eps_frac": 0.3,
+                'epoch_target': GAN_EPOCHS,
+                'mlflow_logging': True,
+            },
+            {
+                "n_epochs": GAN_EPOCHS,
+            },
+            {
+                "use_raw_data": False,
+            },
+    ),
+}
 
 
 def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
@@ -51,50 +163,8 @@ def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
         if not os.path.exists(p):
             print(f"{p} does not exist")
 
-    EPOCHS = 1
-    DIFFUSION_STEPS = 3
-
-    synthesisers = {
-        "DPWGAN_Synthesiser": (
-            WGAN_Synthesiser,
-            {
-                "batch_size": 1024,
-                'gen_lr': 0.005,
-                'dis_lr': 0.001,
-                "latent_dim": 128,
-                'n_critic': 2,
-                "epoch_target": EPOCHS,
-                "mlflow_logging": False,
-                'gen_dims': (512, 512),
-                'dis_dims': (512, 512)
-            },
-            {
-                "n_epochs": EPOCHS,
-            },
-            {
-                "use_raw_data": False,
-            },
-        ),
-        "TableDiffusion_Synthesiser": (
-            TableDiffusion_Synthesiser,
-            {
-                "batch_size": 1024,
-                "lr": 0.005,
-                "dims": (512, 512),
-                "mlflow_logging": False,
-                "epoch_target": EPOCHS * DIFFUSION_STEPS,
-                "diffusion_steps": DIFFUSION_STEPS,
-                "predict_noise": True,
-            },
-            {
-                "n_epochs": EPOCHS,
-                "verbose": True,
-            },
-            {
-                "use_raw_data": True,
-            },
-        )
-    }
+    # Set up the models to run
+    model_configs = {model_name: SYNTHESIZERS[model_name] for model_name in args.models}
 
     dset_name = input_dataset
     datasets = {dset_name: config.datasets[dset_name]}
@@ -117,7 +187,7 @@ def do_things(input_dataset, output_dir="/home/azureuser/drive1/syn"):
 
     run_synthesisers(
         datasets=datasets,
-        synthesisers=synthesisers,
+        synthesisers=model_configs,
         exp_name=EXP_NAME,
         exp_id=exp_id,
         datadir=DATADIR,
@@ -142,6 +212,7 @@ if __name__ =='__main__':
     parser = argparse.ArgumentParser(description='Run DP baselines for WGAN and Diffusion.')
     parser.add_argument('--input_dataset', required=True, help='Name of dataset. Must be defined in configs.py')
     parser.add_argument('--output_dir', default="/home/azureuser/drive1/syn", help='Directory to put generated synthetic data.')
+    parser.add_argument('--models', nargs='+', default=["DPWGAN", "DPDiffusion"], help='List of models to run. Options are DPWGAN, DPautoGAN, PATEGAN, DPDiffusion')
     args = parser.parse_args()
 
     do_things(args.input_dataset, args.output_dir)

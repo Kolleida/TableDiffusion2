@@ -10,9 +10,9 @@ echo "Creating directory: ${SYN_DATA_DIR}"
 mkdir -p "${SYN_DATA_DIR}"
 
 
-RAW_DATA="/home/ericwang/vae_cloud_computing/data/preprocessed/temp/nf_uq_temp_*.csv"
-PREPROC_DATA="data/nfuq_preproc.parquet"
-PREPROC_DATA="data/appraise_preproc.parquet"
+RAW_DATA="data/nfiot_sample.csv"
+PREPROC_DATA="data/nfiot_preproc.parquet"
+# PREPROC_DATA="data/appraise_preproc.parquet"
 
 
 # python prepare_data.py \
@@ -21,5 +21,12 @@ PREPROC_DATA="data/appraise_preproc.parquet"
 
 
 CUDA_VISIBLE_DEVICES=2 python run_diff_gan.py \
-    --input_dataset "appraise" \
-    --output_dir "${SYN_DATA_DIR}"
+    --input_dataset "${DSET}" \
+    --output_dir "${SYN_DATA_DIR}" \
+    --models "DPWGAN" "DPDiffusion" 
+
+
+# CUDA_VISIBLE_DEVICES=2 python ctgan2.py \
+#     --input_dataset "appraise" \
+#     --output_dir "${SYN_DATA_DIR}" \
+#     --model "dpctgan"

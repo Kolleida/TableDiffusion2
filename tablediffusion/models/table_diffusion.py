@@ -21,7 +21,7 @@ import torch
 from matplotlib import pyplot as plt
 from models.architectures import Generator
 from opacus import PrivacyEngine
-from sklearn.preprocessing import OneHotEncoder, QuantileTransformer
+from sklearn.preprocessing import OneHotEncoder, QuantileTransformer, StandardScaler
 from torch import nn
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
@@ -156,7 +156,8 @@ class TableDiffusion_Synthesiser:
                 # Log the number of categories for each discrete column
                 self.category_counts[col] = transformed_df.shape[1]
             else:
-                self.q_transformers[col] = QuantileTransformer()
+                # self.q_transformers[col] = QuantileTransformer()
+                self.q_transformers[col] = StandardScaler()
                 df_encoded[col] = self.q_transformers[col].fit_transform(
                     df[col].values.reshape(-1, 1)
                 )

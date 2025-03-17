@@ -112,7 +112,7 @@ class DataProcessor:
             if "categorical" in datatype:
                 preprocessor = LabelBinarizer()
             else:
-                preprocessor = StandardScaler()
+                preprocessor = MinMaxScaler()
 
             preprocessed_col = preprocessor.fit_transform(preprocessed_col)
             cutoffs.append(preprocessed_col.shape[1])
