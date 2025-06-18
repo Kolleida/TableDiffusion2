@@ -109,7 +109,7 @@ SYNTHESIZERS = {
         {
             "batch_size": 1024,
             "lr": 0.005,
-            "dims": (512, 512),
+            "dims": (128, 128),
             "mlflow_logging": False,
             "epoch_target": DIFF_EPOCHS,
             "diffusion_steps": DIFFUSION_STEPS,

@@ -23,7 +23,7 @@ PREPROC_DATA="data/nfiot_preproc.parquet"
 CUDA_VISIBLE_DEVICES=2 python run_diff_gan.py \
     --input_dataset "${DSET}" \
     --output_dir "${SYN_DATA_DIR}" \
-    --models "DPWGAN" "DPDiffusion" 
+    --models "DPDiffusion" 
 
 
 # CUDA_VISIBLE_DEVICES=2 python ctgan2.py \
